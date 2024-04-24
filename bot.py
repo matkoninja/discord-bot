@@ -70,6 +70,25 @@ async def setup_roles(ctx):
         await ctx.send(f"An error occurred: {str(e)}")
 
 @bot.command()
+async def update_gallery_permissions(ctx):
+    # Fetch the category by name
+    gallery_category = discord.utils.get(ctx.guild.categories, name="Gallery")
+    if gallery_category is None:
+        await ctx.send("Gallery category does not exist!")
+        return
+    
+    # Define permission overwrite for everyone
+    overwrites = {
+        ctx.guild.default_role: discord.PermissionOverwrite(read_messages=True)
+    }
+
+    # Update permissions for each channel in the Gallery category
+    for channel in gallery_category.channels:
+        await channel.edit(overwrites=overwrites)
+        await ctx.send(f"Updated permissions for {channel.name}")
+
+
+@bot.command()
 async def cleanup(ctx):
     # Optional: Clean up by deleting roles, channels, categories
     for category in ctx.guild.categories:
